@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Hashes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .user-hashes {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #cccccc1d;
+        }
+
+        .hash-item {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .hash-item span {
+            font-weight: bold;
+            flex: 1;
+        }
+
+        .copy-btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .copy-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hashes</h1>
+        <div class="container" id="hashList"></div> <!-- Apply container class here -->
+    </div>
+    
+  <script>
+    // Retrieve hashes from sessionStorage
+    const hashes = JSON.parse(sessionStorage.getItem('hashes'));
+
+    // Check if hashes is an array before attempting to iterate
+    if (Array.isArray(hashes)) {
+        // Display hashes in the hashList div
+        const hashListDiv = document.getElementById('hashList');
+        hashes.forEach(userHashes => {
+            const email = userHashes.email;
+            const userHashList = userHashes.hashes;
+
+            const userDiv = document.createElement('div');
+            userDiv.classList.add('user-hashes');
+
+            const emailHeader = document.createElement('h2');
+            emailHeader.textContent = `Email: ${email}`;
+            userDiv.appendChild(emailHeader);
+
+            userHashList.forEach(hash => {
+                const hashItemDiv = document.createElement('div');
+                hashItemDiv.classList.add('hash-item');
+
+                const hashSpan = document.createElement('span');
+                hashSpan.textContent = hash;
+                hashItemDiv.appendChild(hashSpan);
+
+                const copyBtn = document.createElement('button');
+                copyBtn.classList.add('copy-btn');
+                copyBtn.textContent = 'Copy to Clipboard';
+                copyBtn.addEventListener('click', () => {
+                    copyToClipboard(hash);
+                });
+                hashItemDiv.appendChild(copyBtn);
+
+                userDiv.appendChild(hashItemDiv);
+            });
+
+            hashListDiv.appendChild(userDiv);
+        });
+    } else {
+        console.error('Hashes are not available or not in the expected format.');
+    }
+
+    // Function to copy text to clipboard
+    function copyToClipboard(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert('Hash copied to clipboard!');
+    }
+</script>
+
+</body>
+</html>
